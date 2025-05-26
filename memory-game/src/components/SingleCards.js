@@ -17,6 +17,7 @@ export default function SingleCards({cardImages}) {
   return (
     <div>
        <button onClick = {shuffleCards}>New Game</button> 
+       <button>Hi There</button>
     <div className="card-grid">
     {cards.map((card)=> (
     
