@@ -30,6 +30,15 @@ export default function SingleCards({cardImages}) {
     const compareCards = useCallback ( (cardOne, cardTwo) => {
       if (cardOne.src === cardTwo.src) {
         console.log("Match")
+        setCards(prevCards => {
+          return prevCards.map(card => {
+            if (card.src === cardOne.src) {
+              return {...card, matched : true}
+            } else {
+              return card
+            }
+          })
+        })
         resetTurn()
       }
       else {
