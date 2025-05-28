@@ -8,6 +8,8 @@ export default function SingleCards({cardImages}) {
     const [turns, setTurns] = useState(0)
     const [choiceOne, setChoiceOne] = useState(null)
     const [choiceTwo, setChoiceTwo] = useState(null)
+    const [disabled, setDisabled] = useState(false)
+    
 
   //Shuffle cards Logic
     const shuffleCards = () => {
@@ -15,12 +17,15 @@ export default function SingleCards({cardImages}) {
           .map((card) => ({...card, id : Math.random() }))
           setCards(shuffledcards)
           setTurns(0)
-          alert("Button clicked")
+          setChoiceOne(null)
+          setChoiceTwo(null)
+          
           
         }     
   // Card Click (User Choice) logic
 
     const handleClick = (card) => {
+      if (disabled) return
       if (card === choiceOne) return
       choiceOne ? setChoiceTwo(card) : setChoiceOne(card)
       
@@ -28,6 +33,7 @@ export default function SingleCards({cardImages}) {
 
   // Card Comparision Logic
     const compareCards = useCallback ( (cardOne, cardTwo) => {
+      setDisabled(true)
       if (cardOne.src === cardTwo.src) {
         console.log("Match")
         setCards(prevCards => {
@@ -42,9 +48,10 @@ export default function SingleCards({cardImages}) {
         resetTurn()
       }
       else {
-        alert("Try Again")
-        console.log("Not a Match")
-        resetTurn()
+        setTimeout(() => {
+          resetTurn()
+        },1000)
+        
       }
     },[])
     
@@ -55,26 +62,35 @@ export default function SingleCards({cardImages}) {
       }
    }, [choiceOne, choiceTwo , compareCards])
   
-  
-
+   // Helper function to check if card should be flipped
+    const isFlipped = (card) => {
+      return card === choiceOne || card === choiceTwo || card.matched
+    }
+    // Start Game automatically
+    useEffect(() => {
+      shuffleCards()
+    },[])
     // Reset Logic 
 
     const resetTurn = () => {
       setChoiceOne(null)
       setChoiceTwo(null)
       setTurns(prevTurns => prevTurns + 1)
+      setDisabled(false)
     }
 
   return (
     <div>
        <button onClick = {shuffleCards}>New Game</button> 
-       <button>Turns: {turns}</button>
+       <p>Turns: {turns}</p>
     <div className="card-grid">
     {cards.map((card)=> (
     
         <div className="card" key={card.id}>
-          <img src={card.src} className="front" alt="front card" />
-          <img src = "/img/cover.png" onClick={() => handleClick(card)} className="back" alt="back card" />
+          <div className= {isFlipped(card) ? "flipped" : ""}>
+            <img src={card.src} className="front" alt="front card" />
+            <img src = "/img/cover.png" onClick={() => handleClick(card)} className="back" alt="back card" />
+          </div>
         </div>
         
     
