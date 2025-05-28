@@ -22,7 +22,7 @@ function App() {
       <h1>Magic Match</h1>
       
 
-    <SingleCards cardImages = {cardsImages} />
+    <SingleCards key = {cardsImages.id} cardImages = {cardsImages} />
 
       
     </div>
